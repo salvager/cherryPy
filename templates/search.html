@@ -16,10 +16,17 @@
 <h1> Search Results for query '{{ parameters.originalQuery }}' </h1>
 <ul>
 {% for doc in parameters.docs %}
-		<li><a href="{{ doc['warc_WARC-Target-URI'][0] }}">{{ doc['tika_title'][0] }}</a></li>
+	 {% if doc['tika_title'] is defined %}
+		<li><a href="{{ doc['warc_WARC-Target-URI'][0] }}" target="_blank">{{ doc['tika_title'][0] }}</a></li>
+	{% endif %}
+        {% if doc['tika_author'] is defined %}
+                <p>Author: {{ doc['tika_author'][0] }}</p>
+        {% endif %}
+
 	{% if doc['tika_description'] is defined %}
 		<p>{{ doc['tika_description'][0] }}</p>
 	{% endif %}
+
 {% endfor %}
 </ul>
 
