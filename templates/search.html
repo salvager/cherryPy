@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" 
+               "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>CTRnet Search</title>
+</head>
+<body>
+<form action="search" method="post">
+        <p> Please enter your query to search in the collection</p>
+        <input type="text" name="query" value="{{ parameters.originalQuery }}"  size="35" maxlength="60" />
+        <p><input type="submit" value="Search"/> <input type="reset" value="Clear"/></p>
+</form>
+<h2>About {{ parameters.numFound }} results</h2>
+
+<h1> Search Results for query '{{ parameters.originalQuery }}' </h1>
+<ul>
+{% for doc in parameters.docs %}
+		<li><a href="{{ doc['warc_WARC-Target-URI'][0] }}">{{ doc['tika_title'][0] }}</a></li>
+	{% if doc['tika_description'] is defined %}
+		<p>{{ doc['tika_description'][0] }}</p>
+	{% endif %}
+{% endfor %}
+</ul>
+
+{% for i in range(parameters.noOfPages) %}
+	<a href='/search?page={{ i }}&query={{ parameters.originalQuery }}'>{{ i }}</a>
+{% endfor %}
+
+</body></html>
