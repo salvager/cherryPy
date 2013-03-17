@@ -1,37 +1,45 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" 
-               "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link type="text/css" rel="stylesheet" href="stylesheet.css"/>
 <title>CTRnet Search</title>
 </head>
 <body>
+<div align="center">
 <form action="search" method="post">
-        <p> Please enter your query to search in the collection</p>
-        <input type="text" name="query" value="{{ parameters.originalQuery }}"  size="35" maxlength="60" />
+        <input type="text" name="query" value="{{ parameters.originalQuery }}" style="width: 370px; height:25px;"  maxlength="60" />
         <p><input type="submit" value="Search"/> <input type="reset" value="Clear"/></p>
 </form>
-<h2>About {{ parameters.numFound }} results</h2>
-
-<h1> Search Results for query '{{ parameters.originalQuery }}' </h1>
+</div>
+<div algin="center"><p style="font-size:12px" align="center"> {{ parameters.numFound }}  results found for query '{{ parameters.originalQuery }}' </p>
+</div>
 <ul>
 {% for doc in parameters.docs %}
 	 {% if doc['tika_title'] is defined %}
-		<li><a href="{{ doc['warc_WARC-Target-URI'][0] }}" target="_blank">{{ doc['tika_title'][0] }}</a></li>
+		<p style= "font-family:Arial, Helvetica, sans-serif;font-size: 16px"><a href="{{ doc['warc_WARC-Target-URI'][0] }}" target="_blank">{{ doc['tika_title'][0] }}</a></p>
 	{% endif %}
         {% if doc['tika_author'] is defined %}
-                <p>Author: {{ doc['tika_author'][0] }}</p>
+                <p style = "font-size: 12px">Author: {{ doc['tika_author'][0] }}</p>
         {% endif %}
 
 	{% if doc['tika_description'] is defined %}
-		<p>{{ doc['tika_description'][0] }}</p>
+		<p style = "font-family:Georgia; font-size: 12px">{{ doc['tika_description'][0] }}</p>
 	{% endif %}
 
 {% endfor %}
 </ul>
 
+
+<div align="center">
 {% for i in range(parameters.noOfPages) %}
-	<a href='/search?page={{ i }}&query={{ parameters.originalQuery }}'>{{ i }}</a>
 {% endfor %}
+<a href='/search?page={{ 0 }}&query={{ parameters.originalQuery }}'>1</a>
+{% if parameters.pagenumber != parameters.noOfPages %}
+	<a href='/search?page={{ parameters.pagenumber+1 }}&query={{ parameters.originalQuery }}'>Next</a>
+{% endif %}
+<a href='/search?page={{ parameters.noOfPages }}&query={{ parameters.originalQuery }}'>{{ parameters.noOfPages }}</a>
+(current page number {{ parameters.pagenumber+1 }})
+</div>
 
 </body></html>

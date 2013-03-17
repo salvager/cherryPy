@@ -32,14 +32,21 @@ class Root(object):
 		query = 'text:('+params['query']+')'
 		parameters['query'] = query
 		if 'page' in params:
-			parameters['start'] = int(params['page'])*10;
+			parameters['start'] = int(params['page'])*10
+			parameters['pagenumber'] = int(params['page'])
+		else:
+			parameters['pagenumber'] = 0
 		test.assignParameters(parameters)
 		parameters['numFound'] = test.getresponseParams('numFound')
 		parameters['docs'] = test.getresponseParams('docs')
 		parameters['noOfPages'] = parameters['numFound']/10
 		return tmpl.render(parameters=parameters)	
 
+    @cherrypy.expose
+    def default(self, attr='abc'):
+	return "Page not Found!"
  
 app = cherrypy.tree.mount(Root(), "/", config)
+cherrypy.config.update({'server.socket_host':'0.0.0.0','server.socket_port':9999,})
 cherrypy.engine.start()
 cherrypy.engine.block()

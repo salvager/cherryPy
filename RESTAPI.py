@@ -24,9 +24,11 @@ class RestAPI:
 	
 	def requestAPI(self):
 		self.r = requests.post(url=self.URI,data=self.data,headers=self.headers,auth=(self.username,self.password))
+		print self.data
 		self.status = self.r.status_code
 		self.response = self.r.text
-		self.response = json.loads(self.response)	
+		self.response = json.loads(self.response)
+		print self.response['QUERY']['json']['response']['docs'][0]['warc_WARC-Target-URI']	
 
 	def getStatus(self):
 		return self.status
