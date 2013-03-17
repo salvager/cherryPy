@@ -9,46 +9,69 @@ class RestAPI:
 		self.username = 'administrator'
 		self.password = 'foo'
 		self.headers = {'content-type': 'application/json'}
-		self.parameters = {}		
+		self.SolrParameters = {}		
+		self.UIParameters = {}
 		self.status = ''
 		self.response = ''
 		self.data = {}
 		self.r = ''
 
 	def addToSolrURI(self):
-		for each in self.parameters:
-			self.Solr_URI = self.Solr_URI+'&'+each+'='+str(self.parameters[each])
-		self.Solr_URI = self.Solr_URI+'&facet.field=tika_keywords'+'&facet.field=tika_Content-Type'
+		for each in self.SolrParameters:
+			self.Solr_URI = self.Solr_URI+'&'+each+'='+str(self.SolrParameters[each])
+
+	def addDupSolrURI(self, field, value):
+		self.Solr_URI = self.Solr_URI+'&'+field+'='+value
 
 	def pingURI(self):
 		self.r = requests.post(self.Solr_URI)
 		self.status = self.r.status_code
 		self.response = json.loads(self.r.text)
-		print self.Solr_URI	
+
+	def assignStaticParameters(self):
+		self.SolrParameters['qf'] = 'tika_title^10 text^5.0'
+		self.SolrParameters['hl'] = 'true'
+		self.SolrParameters['hl.fl'] = 'text'
+                self.SolrParameters['hl.simple.pre'] = '<em>'
+                self.SolrParameters['hl.simple.post'] = '</em>'
+                self.SolrParameters['hl.usePhraseHighlighter'] = 'true'
+                self.SolrParameters['hl.fragsize'] = 650
+                self.SolrParameters['hl.mergeContinuous'] = 'true'
+                self.SolrParameters['facet'] = 'true'
+                self.SolrParameters['facet.field'] = 'tika_author'
+                self.SolrParameters['facet.limit'] = 6 
+                self.SolrParameters['facet.mincount']=6
+	        self.addDupSolrURI('facet.field','tika_author')
+		self.addDupSolrURI('facet.field','tika_keywords')
+		self.addDupSolrURI('facet.field','tika_content-Type')		
 
 	def assignParameters(self, params):
-		self.parameters['qf'] = 'tika_title^10 text^5.0'
-		self.parameters['hl'] = 'true'
-		self.parameters['hl.fl'] = 'text'
-		self.parameters['hl.simple.pre']='<em>'
-		self.parameters['hl.simple.post']='</em>'
-		self.parameters['hl.usePhraseHighlighter']='true'
-		self.parameters['hl.fragsize']=300
-		self.parameters['hl.mergeContinuous']='true'
-		self.parameters['q'] = params['query']
-		self.parameters['facet']='true'
-		self.parameters['facet.field']='tika_author'
-		self.parameters['facet.limit']=6
-		self.parameters['facet.mincount']=6
-		if 'start' in params:
-			self.parameters['start'] = params['start']
-#		print self.parameters
-		self.data['query'] = self.parameters
-		self.data = json.dumps(self.data)
+		self.UIParameters['originalQuery'] = params['query']
+		self.SolrParameters['q'] = 'text:('+params['query']+')'
+		if 'page' in params:
+			self.SolrParameters['start'] = int(params['page'])*10
+			self.UIParameters['pagenumber'] = int(params['page'])
+		else:
+			self.UIParameters['pagenumber'] = 0
+		for key, value in params.iteritems():
+			if key.startswith('f_'):
+				self.addDupSolrURI('fq',value)	
+		self.assignStaticParameters()
 		self.addToSolrURI()
-		self.pingURI()		
-#		self.requestAPI()
+		self.pingURI()
+
+#		print self.parameters
+#		self.data['query'] = self.parameters
+#		self.data = json.dumps(self.data)
 	
+	def getResults(self):
+		self.UIParameters['numFound'] = self.getresponseParams('numFound')
+		self.UIParameters['docs'] = self.getresponseParams('docs')
+		self.UIParameters['noOfPages'] = self.UIParameters['numFound']/10
+		self.UIParameters['highlights'] = self.getHighlights()
+		self.UIParameters['facets'] = self.getFacets()
+		return self.UIParameters		
+
 	def requestAPI(self):
 		self.r = requests.post(url=self.URI,data=self.data,headers=self.headers,auth=(self.username,self.password))
 		self.status = self.r.status_code
@@ -65,8 +88,10 @@ class RestAPI:
 		return self.response['response'][param]
 	
 	def getHighlights(self):
-		return self.response['highlighting']
-
+		if self.response['highlighting'] is not None:
+			return self.response['highlighting']
+		else:
+			return ""
 	def getFacets(self):
 		return self.convertFacets()
 	
@@ -79,13 +104,16 @@ class RestAPI:
 
 		
 
-test=RestAPI()
-params = {}
-params['query'] = 'text:(virginia +earthquake)'
-params['start'] = 10
-params['rows'] = 20
-test.assignParameters(params)
-print test.getFacets()
+#test=RestAPI()
+#params = {}
+#params['query'] = 'text:(virginia +earthquake)'
+#params['start'] = 10
+#params['rows'] = 20
+#test.assignParameters(params)
+#print test.Solr_URI
+#print test.response
+#print test.getResults()
+#print test.getFacets()
 #test.requestAPI()
 #print test.status
 #print test.getFacets()

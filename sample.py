@@ -32,22 +32,16 @@ class Root(object):
 	tmpl = env.get_template("search.html")
 	if 'query' in params:
 		parameters = {}
-		parameters['originalQuery'] = params['query']
-		query = 'text:('+params['query']+')'
-		parameters['query'] = query
-		if 'page' in params:
-			parameters['start'] = int(params['page'])*10
-			parameters['pagenumber'] = int(params['page'])
-		else:
-			parameters['pagenumber'] = 0
+		for each in params:
+			parameters[each] = params[each]	
+		parameters['url'] = cherrypy.url()
 		test.assignParameters(parameters)
-		parameters['numFound'] = test.getresponseParams('numFound')
-		parameters['docs'] = test.getresponseParams('docs')
-		parameters['noOfPages'] = parameters['numFound']/10
-		parameters['highlights'] = test.getHighlights()
-		parameters['facets'] = test.getFacets()
-		return tmpl.render(parameters=parameters)	
-
+		if test.getStatus() == 200:
+			parameters = test.getResults()
+			print parameters['numFound'], parameters['noOfPages']
+			return tmpl.render(parameters=parameters)	
+		else:
+			return "Error, please enter query";
     @cherrypy.expose
     def default(self, attr='abc'):
 	return "Page not Found!"

@@ -14,13 +14,21 @@
 </div>
 <div algin="center"><p style="font-size:12px" align="center"> {{ parameters.numFound }}  results found for query '{{ parameters.originalQuery }}' </p>
 </div>
+
 <div style="float:left; margin:5px;margin-top:0px;width:185px;padding:5px;top:-20px;position:relative;">
+{% if parameters['fq'] is defined %}
+        Results with filter {{ parameters['fq'] }}
+{% endif %}
+
+
 {% for eachFacet in parameters.facets['facet_fields'] %}
 	<ul>
-	<p style="font-size: 18px; text-align: center;">{{ eachFacet }}</p>
-	{% for field in parameters.facets['facet_fields'][eachFacet] %}
-		<p>{{ field }} : {{ parameters.facets['facet_fields'][eachFacet][field] }}</p>
-	{% endfor %}	
+	{% if parameters.facets['facet_fields'][eachFacet]|length > 5 %}
+		<p style="font-size: 18px; text-align: center;">{{ eachFacet }}</p>
+		{% for field in parameters.facets['facet_fields'][eachFacet] %}
+			<p><a href="/search?f_{{ eachFacet }}={{ eachFacet }}:{{ field }}&query={{ parameters.originalQuery }}">{{ field }} : {{ parameters.facets['facet_fields'][eachFacet][field] }}</a></p>
+		{% endfor %}	
+	{% endif %}
 	</ul>
 {% endfor %}
 </div>
@@ -40,10 +48,12 @@
         {% endif %}
 {#
 	{% if doc['tika_description'] is defined %}
-		<p style = "font-family:Georgia; font-size: 12px">{{ doc['tika_description'][0] }}</p>
+		<p style = "font-family:Georgia; font-size: 12px">"{{ doc['tika_description'][0] }}"</p>
 	{% endif %}
 #}
+	{% if parameters.highlights[doc['id']]['text'] is defined %}
 		{{ parameters.highlights[doc['id']]['text'][0] }}
+	{% endif %}
 {% endfor %}
 </ul>
 </div>
@@ -56,7 +66,7 @@
 	<a href='/search?page={{ parameters.pagenumber+1 }}&query={{ parameters.originalQuery }}'>Next</a>
 {% endif %}
 <a href='/search?page={{ parameters.noOfPages }}&query={{ parameters.originalQuery }}'>{{ parameters.noOfPages }}</a>
-(current page number {{ parameters.pagenumber+1 }})
+(Page {{ parameters.pagenumber+1 }} in {{ parameters.noOfPages }})
 </div>
 
 </body></html>
