@@ -35,7 +35,7 @@ class RestAPI:
                 self.SolrParameters['hl.simple.pre'] = '<em>'
                 self.SolrParameters['hl.simple.post'] = '</em>'
                 self.SolrParameters['hl.usePhraseHighlighter'] = 'true'
-                self.SolrParameters['hl.fragsize'] = 650
+                self.SolrParameters['hl.fragsize'] = 150
                 self.SolrParameters['hl.mergeContinuous'] = 'true'
                 self.SolrParameters['facet'] = 'true'
                 self.SolrParameters['facet.field'] = 'tika_author'
@@ -43,7 +43,7 @@ class RestAPI:
                 self.SolrParameters['facet.mincount']=6
 	        self.addDupSolrURI('facet.field','tika_author')
 		self.addDupSolrURI('facet.field','tika_keywords')
-		self.addDupSolrURI('facet.field','tika_content-Type')		
+		self.addDupSolrURI('facet.field','tika_Content-Type')		
 
 	def assignParameters(self, params):
 		self.UIParameters['originalQuery'] = params['query']
@@ -53,11 +53,20 @@ class RestAPI:
 			self.UIParameters['pagenumber'] = int(params['page'])
 		else:
 			self.UIParameters['pagenumber'] = 0
+		self.UIParameters['url'] = params['url']+'?'
+		self.UIParameters['url'] = self.UIParameters['url']+'&'+'query='+params['query']
 		for key, value in params.iteritems():
-			if key.startswith('f_'):
-				self.addDupSolrURI('fq',value)	
+			if key.startswith('fq'):
+				if type(value).__name__=='list':
+					for each in value:
+						self.addDupSolrURI('fq',each)
+						self.UIParameters['url'] = self.UIParameters['url']+'&'+key+'='+each
+				else:
+					self.addDupSolrURI('fq',value)
+					self.UIParameters['url'] = self.UIParameters['url']+'&'+key+'='+value
 		self.assignStaticParameters()
 		self.addToSolrURI()
+		print self.Solr_URI
 		self.pingURI()
 
 #		print self.parameters
@@ -99,6 +108,7 @@ class RestAPI:
 		facets = self.response['facet_counts']
 		for eachFacet in facets['facet_fields']:
 			facets['facet_fields'][eachFacet] = dict(itertools.izip_longest(*[iter(facets['facet_fields'][eachFacet])]*2, fillvalue=""))
+		print facets
 		return facets
 
 
