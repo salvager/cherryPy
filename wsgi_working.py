@@ -1,17 +1,17 @@
-#!/usr/bin/env python
-import cherrypy
+import sys
+sys.stdout = sys.stderr
+
 from os import path
+import atexit
+import threading
+import cherrypy
 from jinja2 import Environment, FileSystemLoader
- 
-current_dir = path.dirname(path.abspath(__file__))
-env = Environment(loader=FileSystemLoader(
-    path.join(current_dir,'templates3'))
-)
- 
-config = {
- '/': {},
-}
- 
+
+cherrypy.config.update({'environment': 'embedded'})
+
+current_dir='/srv/www/wsgi'
+env = Environment(loader=FileSystemLoader(path.join(current_dir,'templates3')))
+
 class Subpage(object):
     @cherrypy.expose
     def index(self):
@@ -35,7 +35,5 @@ class Root(object):
     def foo(self):
         tmpl = env.get_template("foo.html")
         return tmpl.render()
- 
-app = cherrypy.tree.mount(Root(), "/", config)
-cherrypy.engine.start()
-cherrypy.engine.block()
+
+application = cherrypy.Application(Root(), script_name=None, config=None)

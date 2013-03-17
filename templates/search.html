@@ -14,6 +14,22 @@
 </div>
 <div algin="center"><p style="font-size:12px" align="center"> {{ parameters.numFound }}  results found for query '{{ parameters.originalQuery }}' </p>
 </div>
+<div style="float:left; margin:5px;margin-top:0px;width:185px;padding:5px;top:-20px;position:relative;">
+{% for eachFacet in parameters.facets['facet_fields'] %}
+	<ul>
+	<p style="font-size: 18px; text-align: center;">{{ eachFacet }}</p>
+	{% for field in parameters.facets['facet_fields'][eachFacet] %}
+		<p>{{ field }} : {{ parameters.facets['facet_fields'][eachFacet][field] }}</p>
+	{% endfor %}	
+	</ul>
+{% endfor %}
+</div>
+
+
+<div style="
+    padding-left: 220px;
+    padding-right: 80px;
+    padding-top: 30px;">
 <ul>
 {% for doc in parameters.docs %}
 	 {% if doc['tika_title'] is defined %}
@@ -22,14 +38,15 @@
         {% if doc['tika_author'] is defined %}
                 <p style = "font-size: 12px">Author: {{ doc['tika_author'][0] }}</p>
         {% endif %}
-
+{#
 	{% if doc['tika_description'] is defined %}
 		<p style = "font-family:Georgia; font-size: 12px">{{ doc['tika_description'][0] }}</p>
 	{% endif %}
-
+#}
+		{{ parameters.highlights[doc['id']]['text'][0] }}
 {% endfor %}
 </ul>
-
+</div>
 
 <div align="center">
 {% for i in range(parameters.noOfPages) %}
