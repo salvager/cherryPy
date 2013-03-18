@@ -1,11 +1,12 @@
 import requests
 import json
 import itertools
-
+import collections
+from collections import OrderedDict
 class RestAPI:
 	def __init__(self):
-		self.URI = 'http://LucidN3:8341/sda/v1/client/collections/VAQuake/documents/retrieval'
-		self.Solr_URI = 'http://LucidN4:8888/solr/VAQuake/select?wt=json'
+		self.URI = 'http://LucidN3:8341/sda/v1/client/collections/abc1/documents/retrieval'
+		self.Solr_URI = 'http://LucidN4:8888/solr/abc1/select?wt=json'
 		self.username = 'administrator'
 		self.password = 'foo'
 		self.headers = {'content-type': 'application/json'}
@@ -38,32 +39,45 @@ class RestAPI:
                 self.SolrParameters['hl.fragsize'] = 150
                 self.SolrParameters['hl.mergeContinuous'] = 'true'
                 self.SolrParameters['facet'] = 'true'
-                self.SolrParameters['facet.field'] = 'tika_author'
                 self.SolrParameters['facet.limit'] = 6 
                 self.SolrParameters['facet.mincount']=6
-	        self.addDupSolrURI('facet.field','tika_author')
-		self.addDupSolrURI('facet.field','tika_keywords')
-		self.addDupSolrURI('facet.field','tika_Content-Type')		
+	        self.addDupSolrURI('facet.field','author_display')
+		self.addDupSolrURI('facet.field','tika_category')
+#		self.addDupSolrURI('facet.field','tika_content-type')		
+		self.addDupSolrURI('facet.field','warc_hostname')
+		self.addDupSolrURI('facet.field','clusterId')
+		self.addDupSolrURI('facet.field','tika_date')
+#		self.addDupSolrURI('facet.field','tika_content-type')
+		self.addDupSolrURI('fq','warc_status:200')
+		self.addDupSolrURI('q.alt','*:*')		
 
 	def assignParameters(self, params):
-		self.UIParameters['originalQuery'] = params['query']
-		self.SolrParameters['q'] = 'text:('+params['query']+')'
+		self.UIParameters['url'] = params['url']+'?'
+		if 'query' in params:
+			self.UIParameters['originalQuery'] = params['query']
+			self.SolrParameters['q'] = 'text:('+params['query']+')'
+			self.UIParameters['url'] = self.UIParameters['url']+'&'+'query='+params['query']
+		else:
+			self.SolrParameters['q']='*:*'
+			self.UIParameters['originalQuery']='*:*'
+			self.UIParameters['url'] = self.UIParameters['url']+'&'+'query='+'*:*'
 		if 'page' in params:
 			self.SolrParameters['start'] = int(params['page'])*10
 			self.UIParameters['pagenumber'] = int(params['page'])
 		else:
 			self.UIParameters['pagenumber'] = 0
-		self.UIParameters['url'] = params['url']+'?'
-		self.UIParameters['url'] = self.UIParameters['url']+'&'+'query='+params['query']
 		for key, value in params.iteritems():
 			if key.startswith('fq'):
+				self.UIParameters['fq'] = []
 				if type(value).__name__=='list':
 					for each in value:
 						self.addDupSolrURI('fq',each)
 						self.UIParameters['url'] = self.UIParameters['url']+'&'+key+'='+each
+						self.UIParameters['fq'].append(each)
 				else:
 					self.addDupSolrURI('fq',value)
 					self.UIParameters['url'] = self.UIParameters['url']+'&'+key+'='+value
+					self.UIParameters['fq'].append(value)
 		self.assignStaticParameters()
 		self.addToSolrURI()
 		print self.Solr_URI
@@ -108,6 +122,7 @@ class RestAPI:
 		facets = self.response['facet_counts']
 		for eachFacet in facets['facet_fields']:
 			facets['facet_fields'][eachFacet] = dict(itertools.izip_longest(*[iter(facets['facet_fields'][eachFacet])]*2, fillvalue=""))
+#			facets['facet_fields'][eachFacet] = OrderedDict(sorted(facets['facet_fields'][eachFacet].items(), key = lambda t:t[0]))
 		print facets
 		return facets
 

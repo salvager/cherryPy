@@ -8,32 +8,30 @@
 <body>
 <div align="center">
 <form action="search" method="post">
-        <input type="text" name="query" value="{{ parameters.originalQuery }}" style="width: 370px; height:25px;"  maxlength="60" />
+        <input type="text" name="query" value="{{ parameters.originalQuery }}" default="*:*"style="width: 370px; height:25px;"  maxlength="60" />
         <p><input type="submit" value="Search"/> <input type="reset" value="Clear"/></p>
 </form>
 </div>
 <div algin="center"><p style="font-size:12px" align="center"> {{ parameters.numFound }}  results found for query '{{ parameters.originalQuery }}' </p>
 </div>
-{{ parameters['url'] }}
+ {{ parameters['url'] }}
 <div style="float:left; margin:5px;margin-top:0px;width:185px;padding:5px;top:-20px;position:relative;">
 {% if parameters['fq'] is defined %}
         Results with filter {{ parameters['fq'] }}
 {% endif %}
 
-{% for eachFacet in parameters.facets['facet_fields'] %}
+{% for eachFacet, facetValues in parameters.facets['facet_fields'].iteritems() %}
 	<ul>
-	{% if parameters.facets['facet_fields'][eachFacet]|length > 5 %}
+	{% if parameters.facets['facet_fields'][eachFacet]|length > 0 %}
 		<p style="font-size: 18px; text-align: center;">{{ eachFacet }}</p>
-		{% for field, value in parameters.facets['facet_fields'][eachFacet].iteritems() %}
-			<p><a href="{{ parameters['url'] }}&fq={{ eachFacet }}:{{ field }}">{{ field }} : {{ value }}</a></p>
-{#			<p><a href="/search?f_{{ eachFacet }}={{ eachFacet }}:{{ field }}&query={{ parameters.originalQuery }}">{{ field }} : {{ parameters.facets['facet_fields'][eachFacet][field] }}</a></p> #}
-		{% endfor %}	
+		{% for field, value in facetValues.iteritems()  %}
+				<p><a style="text-decoration:none;" href='{{ parameters['url'] }}&fq={{ eachFacet }}:"{{ field }}"'>{{ field }} : {{ value }}</a></p>
+{#				<p><a href="/search?f_{{ eachFacet }}={{ eachFacet }}:{{ field }}&query={{ parameters.originalQuery }}">{{ field }} : {{ parameters.facets['facet_fields'][eachFacet][field] }}</a></p> #}
+		{% endfor %}
 	{% endif %}
 	</ul>
 {% endfor %}
 </div>
-
-
 <div style="
     padding-left: 220px;
     padding-right: 80px;
@@ -41,15 +39,17 @@
 <ul>
 {% for doc in parameters.docs %}
 	 {% if doc['tika_title'] is defined %}
-		<p style= "font-family:Arial, Helvetica, sans-serif;font-size: 16px"><a href="{{ doc['warc_WARC-Target-URI'][0] }}" target="_blank">{{ doc['tika_title'][0] }}</a></p>
+		<p style= "font-family:Arial, Helvetica, sans-serif;font-size: 16px"><a style="text-decoration:none" href="{{ doc['warc_WARC-Target-URI'][0] }}" target="_blank">{{ doc['tika_title'][0] }}</a></p>
+	{% elif doc['warc_WARC-Target-URI'] is defined %}
+		<p style= "font-family:Arial, Helvetica, sans-serif;font-size: 16px"><a style="text-decoration:none" href="{{ doc['warc_WARC-Target-URI'][0] }}" target="_blank">{{ doc['warc_WARC-Target-URI'][0] }}</a></p>
 	{% endif %}
-        {% if doc['tika_author'] is defined %}
+{#        {% if doc['tika_author'] is defined %}
                 <p style = "font-size: 12px">Author: {{ doc['tika_author'][0] }}</p>
         {% endif %}
         {% if doc['tika_keywords'] is defined %}
                 <p style = "font-size: 12px">Keywords: {{ doc['tika_keywords'][0] }}</p>
         {% endif %}
-
+#}
 {#
 	{% if doc['tika_description'] is defined %}
 		<p style = "font-family:Georgia; font-size: 12px">"{{ doc['tika_description'][0] }}"</p>
@@ -57,6 +57,8 @@
 #}
 	{% if parameters.highlights[doc['id']]['text'] is defined %}
 		{{ parameters.highlights[doc['id']]['text'][0] }}
+	{% elif doc['description'] is defined %}
+		{{ doc['description'] }}
 	{% endif %}
 {% endfor %}
 </ul>

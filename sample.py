@@ -30,18 +30,18 @@ class Root(object):
     def search(self, **params):
 	test = RestAPI()
 	tmpl = env.get_template("search.html")
-	if 'query' in params:
-		parameters = {}
-		for each in params:
-			parameters[each] = params[each]	
-		parameters['url'] = cherrypy.url()
-		test.assignParameters(parameters)
-		if test.getStatus() == 200:
-			parameters = test.getResults()
-			print parameters['numFound'], parameters['noOfPages']
-			return tmpl.render(parameters=parameters)	
-		else:
-			return "Error, please enter query";
+#	if 'query' in params:
+	parameters = {}
+	for each in params:
+		parameters[each] = params[each]	
+	parameters['url'] = cherrypy.url()
+	test.assignParameters(parameters)
+	if test.getStatus() == 200:
+		parameters = test.getResults()
+		print parameters['numFound'], parameters['noOfPages']
+		return tmpl.render(parameters=parameters)	
+#	else:
+#		return "Error, please enter query";
     @cherrypy.expose
     def default(self, attr='abc'):
 	return "Page not Found!"
