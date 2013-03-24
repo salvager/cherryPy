@@ -6,7 +6,7 @@ from collections import OrderedDict
 class RestAPI:
 	def __init__(self):
 		self.URI = 'http://LucidN3:8341/sda/v1/client/collections/abc1/documents/retrieval'
-		self.Solr_URI = 'http://LucidN4:8888/solr/abc1/select?wt=json'
+		self.Solr_URI = 'http://LucidN4:8888/solr/Test7/select?wt=json'
 		self.username = 'administrator'
 		self.password = 'foo'
 		self.headers = {'content-type': 'application/json'}
@@ -27,7 +27,11 @@ class RestAPI:
 	def pingURI(self):
 		self.r = requests.post(self.Solr_URI)
 		self.status = self.r.status_code
-		self.response = json.loads(self.r.text)
+		self.response = json.loads(self.r.text, object_pairs_hook=OrderedDict)
+		print json.loads(self.r.text, object_pairs_hook=OrderedDict)
+		print self.response['response']['docs'][0]['warc_WARC-Target-URI']
+		print self.response['response']['docs'][1]['warc_WARC-Target-URI']
+          	print self.response['response']['docs'][2]['warc_WARC-Target-URI']
 
 	def assignStaticParameters(self):
 		self.SolrParameters['qf'] = 'tika_title^10 text^5.0'
@@ -39,15 +43,16 @@ class RestAPI:
                 self.SolrParameters['hl.fragsize'] = 150
                 self.SolrParameters['hl.mergeContinuous'] = 'true'
                 self.SolrParameters['facet'] = 'true'
-                self.SolrParameters['facet.limit'] = 6 
-                self.SolrParameters['facet.mincount']=6
+                self.SolrParameters['facet.limit'] = 50 
+                self.SolrParameters['facet.mincount'] = 3
 	        self.addDupSolrURI('facet.field','author_display')
 		self.addDupSolrURI('facet.field','tika_category')
 #		self.addDupSolrURI('facet.field','tika_content-type')		
 		self.addDupSolrURI('facet.field','warc_hostname')
 		self.addDupSolrURI('facet.field','clusterId')
 		self.addDupSolrURI('facet.field','tika_date')
-#		self.addDupSolrURI('facet.field','tika_content-type')
+		self.addDupSolrURI('facet.field','tika_author')
+		self.addDupSolrURI('facet.field','distanceToCentroid')
 		self.addDupSolrURI('fq','warc_status:200')
 		self.addDupSolrURI('q.alt','*:*')		
 
@@ -93,6 +98,9 @@ class RestAPI:
 		self.UIParameters['noOfPages'] = self.UIParameters['numFound']/10
 		self.UIParameters['highlights'] = self.getHighlights()
 		self.UIParameters['facets'] = self.getFacets()
+		print self.response['response']['docs'][0]['warc_WARC-Target-URI'], self.UIParameters['docs'][0]['warc_WARC-Target-URI']
+		print self.response['response']['docs'][1]['warc_WARC-Target-URI'], self.UIParameters['docs'][1]['warc_WARC-Target-URI']
+		print self.response['response']['docs'][2]['warc_WARC-Target-URI'], self.UIParameters['docs'][2]['warc_WARC-Target-URI']
 		return self.UIParameters		
 
 	def requestAPI(self):
@@ -123,6 +131,7 @@ class RestAPI:
 		for eachFacet in facets['facet_fields']:
 			facets['facet_fields'][eachFacet] = dict(itertools.izip_longest(*[iter(facets['facet_fields'][eachFacet])]*2, fillvalue=""))
 #			facets['facet_fields'][eachFacet] = OrderedDict(sorted(facets['facet_fields'][eachFacet].items(), key = lambda t:t[0]))
+			facets['facet_fields'][eachFacet] = OrderedDict(sorted(facets['facet_fields'][eachFacet].items(), key=lambda t:t[1], reverse=True))	
 		print facets
 		return facets
 
@@ -131,10 +140,13 @@ class RestAPI:
 
 #test=RestAPI()
 #params = {}
-#params['query'] = 'text:(virginia +earthquake)'
-#params['start'] = 10
-#params['rows'] = 20
+#params['url'] = 'ab'
+#params['fl'] = 'warc_WARC-Target-URI'
+#params['query'] = '*:*'
+#params['start'] = 0
+#params['rows'] = 0
 #test.assignParameters(params)
+#test.getResults()
 #print test.Solr_URI
 #print test.response
 #print test.getResults()

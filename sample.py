@@ -14,10 +14,20 @@ env = Environment(loader=FileSystemLoader(
 )
 
 
-config = {
- '/': {},
-}
+#config = {
+# '/': {},
+#}
   
+
+config = {
+ '/': {
+   'tools.staticdir.root': current_dir,
+  },
+ '/css': {
+   'tools.staticdir.on': True,
+   'tools.staticdir.dir': "css",
+   },
+}
 
 class Root(object):  
 

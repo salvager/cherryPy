@@ -1,0 +1,75 @@
+p {
+}
+
+#numFound {
+    margin: -10px 0 0 -8px;
+    height: 40px;
+    width: 100%;
+    background-color: #008800;
+    color: #FFFFFF;
+    font-family: Verdana, Arial, Sans-Serif;
+    display:none;
+    text-align:center;
+}
+
+.facets {
+	float: left;
+	width: 200px;
+}
+
+.facets .facet_results {
+	margin: 10px;
+	padding: 10px;
+	padding-bottom: 2px;
+	margin-bottom: 4px;
+	margin-top: 2px;
+}
+
+.facets .facet_results p {
+	margin: 2px;
+}
+
+.facets .facet_results #facet_title {
+	margin: 5px;
+/*	color: #87CEFA; */
+	color: black;	
+	font: Arial;
+	font-size: 20px;
+}
+
+.facets .facet_results #facet_value {
+	font-size: 16px;
+}
+
+.search-results {
+	padding-left: 230px;
+	padding-top: 20px;
+}
+
+.search-results .document {
+	margin-top: 5px;
+	margin-bottom: 14px;
+}
+
+.search-results .document .title {
+	display: inline;
+	color: #00628B;
+	font-size: 18px;
+}
+
+.search-results .document .source_link {
+	display: inline;
+}
+
+.search-results .document .description {
+	margin-top: 1px;
+}
+
+.search-results .highlight {
+	margin-top: 1px;
+}
+
+a:link    { color: rgb(43, 161, 211) }  /* unvisited links */
+a:visited { color: #0c0 }  /* visited links   */
+a:hover   { color: #00c }  /* user hovers     */
+a:active  { color: #ccc }  /* active links    */
