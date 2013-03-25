@@ -1,0 +1,71 @@
+.number1{
+	width: 600px;
+	border: solid;
+	float: left;	
+	padding-left : 20px;
+        padding-right: 20px;
+        padding-top: 20px;
+        padding-bottom: 20px;
+
+}
+
+.number2{
+	 width: 600px;
+        border: solid;
+	float: right;
+	padding-left : 20px;
+        padding-right: 20px;
+        padding-top: 20px;
+        padding-bottom: 20px;
+
+}
+
+.number3{
+	 width: 600px;
+        border: solid;
+	float: left;
+	padding-left : 20px;
+        padding-right: 20px;
+        padding-top: 20px;
+        padding-bottom: 20px;
+
+}
+
+.number4{
+	 width: 600px;
+        border: solid;
+	float: right;
+	padding-left : 20px;
+        padding-right: 20px;
+        padding-top: 20px;
+        padding-bottom: 20px;
+
+}
+
+.number5{
+	 width: 600px;
+        border: solid;
+	float: left;
+	padding-left : 20px;
+	padding-right: 20px;
+	padding-top: 20px;
+	padding-bottom: 20px;
+}
+
+.document{
+	padding-bottom: 3px;
+	padding-top: 3px;
+}
+
+.title {
+	font-size: 22px;
+}
+
+.description {
+	font-size: 16px;
+}
+a:link    { color: rgb(43, 161, 211) }  /* unvisited links */
+a:visited { color: #0c0 }  /* visited links   */
+a:hover   { color: #00c }  /* user hovers     */
+a:active  { color: #ccc }  /* active links    */
+

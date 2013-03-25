@@ -40,6 +40,9 @@
 		<div class="search-results">
 			{% for doc in parameters.docs %}
 				<div class="document">
+				 {% if doc['tika_og:image'] is defined %}
+                        		 <img src="{{ doc['tika_og:image'][0]  }}" height="60" width="60">
+        		        {% endif %}
 				{% if doc['tika_title'] is defined %}
 					<div class='title' ><a style="text-decoration:none" href="{{ doc['warc_WARC-Target-URI'][0]|e }}" target="_blank">{{ doc['tika_title'][0]|e }}</a>  ({{ doc['warc_hostname'][0]|e }})</div>
 				{% elif doc['warc_WARC-Target-URI'] is defined %}

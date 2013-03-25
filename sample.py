@@ -5,6 +5,7 @@ import threading
 import cherrypy
 from jinja2 import Environment, FileSystemLoader
 from RESTAPI import RestAPI
+from ClusterAPI import ClusterAPI
 from os import path
 from cherrypy import wsgiserver
 
@@ -55,7 +56,13 @@ class Root(object):
     @cherrypy.expose
     def default(self, attr='abc'):
 	return "Page not Found!"
-
+   
+    @cherrypy.expose
+    def cluster(self):
+	tmpl = env.get_template("root_mod.html")
+	tmp = ClusterAPI()
+	parameters = tmp.getClusterData()
+	return tmpl.render(parameters=parameters)
 
 #server = wsgiserver.CherryPyWSGIServer(('0.0.0.0',8070), Root, server_name='LucidN1')
 #server.start()

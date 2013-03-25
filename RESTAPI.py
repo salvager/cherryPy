@@ -5,7 +5,7 @@ import collections
 from collections import OrderedDict
 class RestAPI:
 	def __init__(self):
-		self.URI = 'http://LucidN3:8341/sda/v1/client/collections/abc1/documents/retrieval'
+		self.URI = 'http://LucidN3:8341/sda/v1/client/collections/Test7/documents/retrieval'
 		self.Solr_URI = 'http://LucidN4:8888/solr/Test7/select?wt=json'
 		self.username = 'administrator'
 		self.password = 'foo'
@@ -28,10 +28,10 @@ class RestAPI:
 		self.r = requests.post(self.Solr_URI)
 		self.status = self.r.status_code
 		self.response = json.loads(self.r.text, object_pairs_hook=OrderedDict)
-		print json.loads(self.r.text, object_pairs_hook=OrderedDict)
-		print self.response['response']['docs'][0]['warc_WARC-Target-URI']
-		print self.response['response']['docs'][1]['warc_WARC-Target-URI']
-          	print self.response['response']['docs'][2]['warc_WARC-Target-URI']
+#		print json.loads(self.r.text, object_pairs_hook=OrderedDict)
+	#	print self.response['response']['docs'][0]['warc_WARC-Target-URI']
+	#	print self.response['response']['docs'][1]['warc_WARC-Target-URI']
+         # 	print self.response['response']['docs'][2]['warc_WARC-Target-URI']
 
 	def assignStaticParameters(self):
 		self.SolrParameters['qf'] = 'tika_title^10 text^5.0'
@@ -45,6 +45,7 @@ class RestAPI:
                 self.SolrParameters['facet'] = 'true'
                 self.SolrParameters['facet.limit'] = 50 
                 self.SolrParameters['facet.mincount'] = 3
+#		self.SolrParameters['rows']=7000
 	        self.addDupSolrURI('facet.field','author_display')
 		self.addDupSolrURI('facet.field','tika_category')
 #		self.addDupSolrURI('facet.field','tika_content-type')		
@@ -85,7 +86,7 @@ class RestAPI:
 					self.UIParameters['fq'].append(value)
 		self.assignStaticParameters()
 		self.addToSolrURI()
-		print self.Solr_URI
+#		print self.Solr_URI
 		self.pingURI()
 
 #		print self.parameters
@@ -98,16 +99,29 @@ class RestAPI:
 		self.UIParameters['noOfPages'] = self.UIParameters['numFound']/10
 		self.UIParameters['highlights'] = self.getHighlights()
 		self.UIParameters['facets'] = self.getFacets()
-		print self.response['response']['docs'][0]['warc_WARC-Target-URI'], self.UIParameters['docs'][0]['warc_WARC-Target-URI']
-		print self.response['response']['docs'][1]['warc_WARC-Target-URI'], self.UIParameters['docs'][1]['warc_WARC-Target-URI']
-		print self.response['response']['docs'][2]['warc_WARC-Target-URI'], self.UIParameters['docs'][2]['warc_WARC-Target-URI']
+#		print self.response['response']['docs'][0]['warc_WARC-Target-URI'], self.UIParameters['docs'][0]['warc_WARC-Target-URI']
+#		print self.response['response']['docs'][1]['warc_WARC-Target-URI'], self.UIParameters['docs'][1]['warc_WARC-Target-URI']
+#		print self.response['response']['docs'][2]['warc_WARC-Target-URI'], self.UIParameters['docs'][2]['warc_WARC-Target-URI']
+#	        self.UIParameters['docs'] = self.getSimilardocs();	
 		return self.UIParameters		
 
-	def requestAPI(self):
-		self.r = requests.post(url=self.URI,data=self.data,headers=self.headers,auth=(self.username,self.password))
-		self.status = self.r.status_code
-		self.response = self.r.text
-		self.response = json.loads(self.response)
+	def getSimilardocs(self):
+		for each in self.UIParameters['docs']:
+			response = self.requestAPI(each['id'])
+#			if response != "":
+#				self.UIParameters['docs']['similarDocs'] = json.loads(response)
+
+	def requestAPI(self, id):
+		data = {}
+		data['DUPLICATES'] = {"id":id}
+		print self.URI, json.dumps(data)
+		r = requests.post(url=self.URI, data=json.dumps(data) , headers=self.headers, auth=(self.username,self.password))
+		print r.text
+		if r.status_code == 200:
+			print "status code is", r.status_code
+			return r.text
+		else:
+			return ""
 
 	def getStatus(self):
 		return self.status
@@ -132,21 +146,21 @@ class RestAPI:
 			facets['facet_fields'][eachFacet] = dict(itertools.izip_longest(*[iter(facets['facet_fields'][eachFacet])]*2, fillvalue=""))
 #			facets['facet_fields'][eachFacet] = OrderedDict(sorted(facets['facet_fields'][eachFacet].items(), key = lambda t:t[0]))
 			facets['facet_fields'][eachFacet] = OrderedDict(sorted(facets['facet_fields'][eachFacet].items(), key=lambda t:t[1], reverse=True))	
-		print facets
+#		print facets
 		return facets
 
 
 		
 
-#test=RestAPI()
-#params = {}
-#params['url'] = 'ab'
+test=RestAPI()
+params = {}
+params['url'] = 'ab'
 #params['fl'] = 'warc_WARC-Target-URI'
-#params['query'] = '*:*'
+params['query'] = '*:*'
 #params['start'] = 0
-#params['rows'] = 0
-#test.assignParameters(params)
-#test.getResults()
+params['rows'] = 100
+test.assignParameters(params)
+test.getResults()
 #print test.Solr_URI
 #print test.response
 #print test.getResults()
