@@ -1,3 +1,42 @@
+#header {
+        background: rgba(183, 230, 216, 0.72);;
+        text-align: center;
+        height: 100px;
+}
+#header h1 {
+        color: #4f7f5b;
+}
+
+#globalnav {
+        position:relative;
+        float: middle;
+        width: 80%;
+        list-style: none;
+        line-height: 1.5em;
+        margin:0px auto;
+}
+
+#globalnav LI {
+        float:left;
+        margin: 0;
+        padding: 0;
+        background-color: #4f7f5b;
+
+}
+
+#globalnav A {
+        display: block;
+        text-decoration: none;
+        font-weight: bold;
+        margin: 0;
+        padding: 0.25em 1em;
+        border-left:1px solid #fff;
+        border-top:1px solid #fff;
+        border-right:1px solid #aaa;
+        color: white;
+}
+
+
 p {
 }
 

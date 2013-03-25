@@ -1,5 +1,61 @@
+#header {
+	background: rgba(183, 230, 216, 0.72);; 
+	text-align: center;
+	height: 100px;
+}
+#header h1 {
+	color: #4f7f5b;
+}
+
+#globalnav {
+	position:relative;
+	float: middle;
+	width: 70%;
+	list-style: none;
+	line-height: 1.5em;
+	margin:0px auto;
+}
+
+#globalnav LI {
+	float:left;
+	margin: 0;
+	padding: 0;
+	background-color: #4f7f5b;
+	
+}
+
+#globalnav A {
+	display: block;
+	text-decoration: none;
+	font-weight: bold;
+	margin: 0;
+	padding: 0.25em 1em;
+	border-left:1px solid #fff;
+	border-top:1px solid #fff;
+	border-right:1px solid #aaa;	
+	color: white;
+}
+.search-box {
+	text-align : center;
+	padding-top: 10px;
+	padding-bottom: 30px;
+}
+
+.search-box .box {
+	top: 4px;
+	height: 28px;
+	width: 276px;
+}
+
+.search-box .box_submit {
+	width: 100px;
+	top: 3px;
+	font: 5px;
+	height: 30px;
+}
 .number1{
 	width: 600px;
+	height: 400px;
 	border: solid;
 	float: left;	
 	padding-left : 20px;
@@ -11,6 +67,7 @@
 
 .number2{
 	 width: 600px;
+	height: 400px;
         border: solid;
 	float: right;
 	padding-left : 20px;
@@ -58,12 +115,17 @@
 }
 
 .title {
-	font-size: 22px;
+	font-size: 19px;
 }
 
 .description {
 	font-size: 16px;
 }
+
+.clusterTitle {
+	text-align: center;
+}
+
 a:link    { color: rgb(43, 161, 211) }  /* unvisited links */
 a:visited { color: #0c0 }  /* visited links   */
 a:hover   { color: #00c }  /* user hovers     */

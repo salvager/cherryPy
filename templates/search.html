@@ -4,6 +4,24 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<link type="text/css" rel="stylesheet" href="/css/stylesheet.css"/>
 		<title>CTRnet Search</title>
+		         <div id="header">
+                <h1>Crisis, Tragedy and Recovery Network</h1>
+
+        <ul id="globalnav">
+                <li><a href="http://www.ctrnet.net/">Home</a></li>
+                <li><a href="http://www.ctrnet.net/clouds">Word Clouds</a></li>
+                <li><a href="http://www.ctrnet.net/locations">Locations</a></li>
+                <li><a href="http://www.ctrnet.net/node/2936">Sub Projects</a></li>
+                <li><a href="http://www.ctrnet.net/publications">Publications</a></li>
+                <li><a href="http://www.ctrnet.net/othercollections">Other Collections</a></li>
+                <li><a href="http://www.ctrnet.net/webinars">Webinars</a></li>
+                <li><a href="http://www.ctrnet.net/about">About</a></li>
+                <li><a href="http://www.ctrnet.net/faqs">FAQS</a></li>
+		<li><a href="http://nick.dlib.vt.edu:3330/cluster">Search</a></li>
+        </ul>
+        </div>
+
+
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" type="text/javascript"></script>
 		<script src="/css/jquery.lint.js" type="text/javascript"></script>
 		<script src="/css/script.js" type="text/javascript"></script>
@@ -40,13 +58,13 @@
 		<div class="search-results">
 			{% for doc in parameters.docs %}
 				<div class="document">
-				 {% if doc['tika_og:image'] is defined %}
+		{#		 {% if doc['tika_og:image'] is defined %}
                         		 <img src="{{ doc['tika_og:image'][0]  }}" height="60" width="60">
-        		        {% endif %}
+        		        {% endif %} #}
 				{% if doc['tika_title'] is defined %}
-					<div class='title' ><a style="text-decoration:none" href="{{ doc['warc_WARC-Target-URI'][0]|e }}" target="_blank">{{ doc['tika_title'][0]|e }}</a>  ({{ doc['warc_hostname'][0]|e }})</div>
+					<div class='title' ><a style="text-decoration:none" href="{{ doc['warc_WARC-Target-URI']|e }}" target="_blank">{{ doc['tika_title'][0]|e }}</a>  ({{ doc['warc_hostname']|e }})</div>
 				{% elif doc['warc_WARC-Target-URI'] is defined %}
-				<div class='title'><a style="text-decoration:none" href="{{ doc['warc_WARC-Target-URI'][0] }}" target="_blank">{{ doc['warc_WARC-Target-URI'][0]|e }}</a></div>
+				<div class='title'><a style="text-decoration:none" href="{{ doc['warc_WARC-Target-URI'] }}" target="_blank">{{ doc['warc_WARC-Target-URI']|e }}</a></div>
 				{% endif %}
 	 	{#		{% if doc['tika_title'] is defined %}
 				<div class='title'>{{ doc['tika_title'][0] }}</div>

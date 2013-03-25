@@ -5,8 +5,8 @@ import collections
 from collections import OrderedDict
 class RestAPI:
 	def __init__(self):
-		self.URI = 'http://LucidN3:8341/sda/v1/client/collections/Test7/documents/retrieval'
-		self.Solr_URI = 'http://LucidN4:8888/solr/Test7/select?wt=json'
+		self.URI = 'http://LucidN3:8341/sda/v1/client/collections/Test8/documents/retrieval'
+		self.Solr_URI = 'http://LucidN4:8888/solr/Test8/select?wt=json'
 		self.username = 'administrator'
 		self.password = 'foo'
 		self.headers = {'content-type': 'application/json'}
@@ -43,17 +43,17 @@ class RestAPI:
                 self.SolrParameters['hl.fragsize'] = 150
                 self.SolrParameters['hl.mergeContinuous'] = 'true'
                 self.SolrParameters['facet'] = 'true'
-                self.SolrParameters['facet.limit'] = 50 
+                self.SolrParameters['facet.limit'] = 8 
                 self.SolrParameters['facet.mincount'] = 3
 #		self.SolrParameters['rows']=7000
-	        self.addDupSolrURI('facet.field','author_display')
-		self.addDupSolrURI('facet.field','tika_category')
+#	        self.addDupSolrURI('facet.field','author_display')
+#		self.addDupSolrURI('facet.field','tika_category')
 #		self.addDupSolrURI('facet.field','tika_content-type')		
-		self.addDupSolrURI('facet.field','warc_hostname')
+		self.addDupSolrURI('facet.field','domain')
 		self.addDupSolrURI('facet.field','clusterId')
 		self.addDupSolrURI('facet.field','tika_date')
-		self.addDupSolrURI('facet.field','tika_author')
-		self.addDupSolrURI('facet.field','distanceToCentroid')
+		self.addDupSolrURI('facet.field','tika_dc_creator')
+#		self.addDupSolrURI('facet.field','distanceToCentroid')
 		self.addDupSolrURI('fq','warc_status:200')
 		self.addDupSolrURI('q.alt','*:*')		
 
